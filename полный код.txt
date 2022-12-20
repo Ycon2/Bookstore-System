@@ -1,0 +1,705 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <fstream>
+#include <iomanip>
+
+const char separator = ' ';
+const int nameWidth = 40;
+const int numWidth = 10;
+
+class book {
+public:
+	int ID = 0;
+	std::string Title;
+	std::string Author;
+	int Amount = 1;
+	float Price = 0;
+
+	void printBookDebug()
+	{
+		std::cout << "\n";
+		std::cout << std::left << std::setw(numWidth) << std::setfill(separator) << ID;
+		std::cout << std::left << std::setw(nameWidth) << std::setfill(separator) << Title;
+		std::cout << std::left << std::setw(nameWidth) << std::setfill(separator) << Author;
+		std::cout << std::left << std::setw(numWidth) << std::setfill(separator) << Amount;
+		std::cout << std::left << std::setw(numWidth) << std::setfill(separator) << Price;
+		std::cout << "\n";
+		std::cout << std::string(110, '-');
+	}
+	void initBook(std::vector<book>* storage)
+	{
+		if (storage->size() > 0)
+		{
+			int maxId = (*storage)[0].ID;
+
+			for (int i = 1; i < storage->size(); i++)
+			{
+				if ((*storage)[i].ID > maxId)
+				{
+					maxId = (*storage)[i].ID;
+				}
+			}
+			for (int i = 1; i <= maxId + 1; i++)
+			{
+				bool taken = false;
+				for (int j = 0; j < storage->size(); j++)
+				{
+					if (i == (*storage)[j].ID)
+					{
+						taken = true;
+						break;
+					}
+				}
+				if (taken == false)
+				{
+					ID = i;
+					break;
+				}
+				else
+				{
+					taken = false;
+				}
+			}
+		}
+		else
+		{
+			ID = 1;
+		}
+		std::cin.ignore(1000, '\n');
+		system("cls");
+		std::cout << "ДОБАВЛЕНИЕ КНИГИ\n";
+		std::cout << "*************\n";
+		std::cout << "Название книги: ";
+		getline(std::cin, Title);
+		system("cls");
+
+		std::cout << "ДОБАВЛЕНИЕ КНИГИ\n";
+		std::cout << "*************\n";
+		std::cout << "Автор: ";
+		getline(std::cin, Author);
+		system("cls");
+
+		std::cout << "ДОБАВЛЕНИЕ КНИГИ\n";
+		std::cout << "*************\n";
+		std::cout << "Количество: ";
+		while (!(std::cin >> Amount) || Amount <= 0)
+		{
+			system("cls");
+			std::cout << "ДОБАВЛЕНИЕ КНИГИ\n";
+			std::cout << "*************\n";
+			std::cout << "Недопустимое количество.\n";
+			std::cout << "Количество: ";
+			std::cin.clear();
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		}
+		std::cin.ignore(1000, '\n');
+		system("cls");
+
+		std::cout << "ДОБАВЛЕНИЕ КНИГИ\n";
+		std::cout << "*************\n";
+		std::cout << "Цена: ";
+		while (!(std::cin >> Price) || Price <= 0)
+		{
+			system("cls");
+			std::cout << "ДОБАВЛЕНИЕ КНИГИ\n";
+			std::cout << "*************\n";
+			std::cout << "Недопустимая цена.\n";
+			std::cout << "Цена: ";
+			std::cin.clear();
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		}
+		std::cin.ignore(1000, '\n');
+		system("cls");
+	}
+
+	void changeTitle()
+	{
+		system("cls");
+		std::cout << "ИЗМЕНИТЬ НАЗВАНИЕ КНИГИ\n";
+		std::cout << "*************\n";
+
+		std::cout << "Текущее название книги: " << Title << "\n\n";
+
+		std::cin.ignore(1000, '\n');
+		std::cout << "Введите новое назваине книги: ";
+		getline(std::cin, Title);
+	}
+	void changeAuthor()
+	{
+		system("cls");
+		std::cout << "ИЗМЕНЕНИЕ АВТОРА\n";
+		std::cout << "**************\n";
+
+		std::cout << "Текущий автор: " << Author << "\n\n";
+
+		std::cin.ignore(1000, '\n');
+		std::cout << "Введите нового автора: ";
+		getline(std::cin, Author);
+	}
+	void changeAmount()
+	{
+		int value;
+
+		do
+		{
+			system("cls");
+			std::cout << "ИЗМЕНЕНИЕ КОЛИЧЕСТВА\n";
+			std::cout << "**************\n";
+
+			std::cout << "Текущее количество: " << Amount << "\n\n";
+			std::cout << "Введите количество поступивших книг (+(число)) или количество проданных книг (-(число)) : ";
+
+			if (!(std::cin >> value))
+			{
+				system("cls");
+				std::cout << "ИЗМЕНЕНИЕ КОЛИЧЕСТВА\n";
+				std::cout << "**************\n";
+
+				std::cout << "Неверный ввод.";
+			}
+			else if ((Amount + value) < 0)
+			{
+				system("cls");
+				std::cout << "ИЗМЕНЕНИЕ КОЛИЧЕСТВА\n";
+				std::cout << "**************\n";
+
+				std::cout << "Недостаточно доступных книг.";
+			}
+			else
+			{
+				Amount += value;
+				break;
+			}
+			std::cout << "\n\nНажмите ENTER чтобы продолжить...";
+			std::cin.clear();
+			std::cin.ignore(1000, '\n');
+			std::cin.get();
+		} while (true);
+	}
+	void changePrice()
+	{
+		float value;
+
+		do
+		{
+			system("cls");
+			std::cout << "ИЗМЕНЕНИЕ ЦЕНЫ\n";
+			std::cout << "*************\n";
+
+			std::cout << "Текущая цена: " << Price << "\n\n";
+			std::cout << "Введите новую цену: ";
+			if (!(std::cin >> value))
+			{
+				system("cls");
+				std::cout << "ИЗМЕНЕНИЕ ЦЕНЫ\n";
+				std::cout << "*************\n";
+
+				std::cout << "Неверный ввод.";
+			}
+			else if (value <= 0)
+			{
+				system("cls");
+				std::cout << "ИЗМЕНЕНИЕ ЦЕНЫ\n";
+				std::cout << "*************\n";
+
+				std::cout << "Цена должна быть больше 0.";
+			}
+			else
+			{
+				Price = value;
+				break;
+			}
+			std::cout << "\n\nНажмите ENTER чтобы продолжить...";
+			std::cin.clear();
+			std::cin.ignore(1000, '\n');
+			std::cin.get();
+		} while (true);
+	}
+};
+
+int menu();
+int modifyMenu(book modifiedBook);
+
+void addBook(std::vector<book>* storage);
+void modifyID(std::vector<book>* storage);
+void deleteBook(std::vector<book>* storage);
+void browseStorage(std::vector<book> storage);
+bool isStorageEmpty(std::vector<book> storage);
+
+void readStorage(std::vector<book>* storage);
+void writeStorage(std::vector<book> storage);
+
+int main()
+{
+	std::vector<book>storage;
+	readStorage(&storage);
+	setlocale(LC_ALL, "Russian");
+
+	do
+	{
+		system("cls");
+
+		switch (menu())
+		{
+		case 0:
+			system("cls");
+			std::cout << "BOOKSTORE SYSTEM\n";
+			std::cout << "**************************\n";
+
+			std::cout << "\nДО НОВЫХ ВСТРЕЧ!!!";
+
+			system("pause>0");
+			system("cls");
+
+			return 0;
+		case 1:
+			addBook(&storage);
+			break;
+		case 2:
+			system("cls");
+			std::cout << "ПРОСМОТР БИБЛИОТЕКИ\n";
+			std::cout << "***************\n";
+			if (!(isStorageEmpty(storage)))
+			{
+				modifyID(&storage);
+			}
+			break;
+		case 3:
+			system("cls");
+			std::cout << "УДАЛИТЬ КНИГУ\n";
+			std::cout << "************\n";
+			if (!(isStorageEmpty(storage)))
+			{
+				deleteBook(&storage);
+			}
+			break;
+		case 4:
+			system("cls");
+			std::cout << "ПРОСМОТР БИБЛИОТЕКИ\n";
+			std::cout << "***************\n";
+			if (!(isStorageEmpty(storage)))
+			{
+				browseStorage(storage);
+			}
+			break;
+		default:
+			system("cls");
+			std::cout << "BOOKSTORE SYSTEM\n";
+			std::cout << "**************************\n";
+			std::cout << "Неверный ввод.\n\nНажмите ENTER чтобы продолжить...";
+			std::cin.get();
+			break;
+		}
+	} while (true);
+}
+
+void readStorage(std::vector<book>* storage)
+{
+	std::ifstream file;
+	book tempBook;
+	int counter = 0;
+	std::string line;
+
+	file.open("book_storage.txt");
+	while (getline(file, line))
+	{
+		switch (counter % 5)
+		{
+		case 0:
+			tempBook.ID = stoi(line);
+			break;
+		case 1:
+			tempBook.Title = line;
+			break;
+		case 2:
+			tempBook.Author = line;
+			break;
+		case 3:
+			tempBook.Amount = stoi(line);
+			break;
+		case 4:
+			tempBook.Price = stof(line);
+			storage->push_back(tempBook);
+			break;
+		}
+
+		counter++;
+	}
+
+	file.close();
+}
+
+void writeStorage(std::vector<book> storage)
+{
+	std::ofstream file;
+	file.open("book_storage.txt");
+	for (int i = 0; i < storage.size(); ++i) {
+		file << storage[i].ID << std::endl;
+		file << storage[i].Title << std::endl;
+		file << storage[i].Author << std::endl;
+		file << storage[i].Amount << std::endl;
+		file << storage[i].Price << std::endl;
+	}
+	file.close();
+}
+
+int menu()
+{
+	int mode;
+	std::cout << "BOOKSTORE SYSTEM\n";
+	std::cout << "**************************\n";
+
+	std::cout << "Меню: \n\n";
+	std::cout << "1 - Добавить книгу\n";
+	std::cout << "2 - Редактировать книгу\n";
+	std::cout << "3 - Удалить книгу\n";
+	std::cout << "4 - Посмотреть все книги\n\n";
+	std::cout << "0 - Выйти\n\n";
+
+	while (!(std::cin >> mode) || (mode < 0 || mode > 4))
+	{
+		std::cin.clear();
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		return -1;
+	}
+
+	return mode;
+}
+
+void addBook(std::vector<book>* storage)
+{
+	book tempBook;
+	char yn;
+
+	tempBook.initBook(storage);
+
+	do
+	{
+		system("cls");
+
+		std::cout << "ДОБАВИТЬ НОВУЮ КНИГУ\n";
+		std::cout << "*************\n";
+
+		std::cout << "Вы вошли!: \n";
+
+		std::cout << "\n";
+		std::cout << std::left << std::setw(numWidth) << std::setfill(separator) << "ID";
+		std::cout << std::left << std::setw(nameWidth) << std::setfill(separator) << "НАЗВАНИЕ КНИГИ";
+		std::cout << std::left << std::setw(nameWidth) << std::setfill(separator) << "АВТОР";
+		std::cout << std::left << std::setw(numWidth) << std::setfill(separator) << "КОЛ-ВО";
+		std::cout << std::left << std::setw(numWidth) << std::setfill(separator) << "ЦЕНА";
+		std::cout << "\n";
+		std::cout << std::string(110, '-');
+
+		tempBook.printBookDebug();
+
+		std::cout << "\nПодтвердить? (y/n): ";
+		std::cin >> yn;
+		yn = tolower(yn);
+
+		switch (yn)
+		{
+		case 'y':
+			system("cls");
+			std::cout << "ДОБАВИТЬ НОВУЮ КНИГУ\n";
+			std::cout << "*************\n";
+
+			storage->push_back(tempBook);
+			writeStorage(*storage);
+			std::cout << "Книга успешно добавлена.\n\nНажмите ENTER чтобы продолжить...";
+			std::cin.get();
+			std::cin.clear();
+			std::cin.ignore();
+			goto label1;
+		case 'n':
+			system("cls");
+			std::cout << "ДОБАВИТЬ НОВУЮ КНИГУ\n";
+			std::cout << "*************\n";
+
+			std::cout << "\nНажмите ENTER чтобы продолжить...\n";
+			std::cin.get();
+			std::cin.clear();
+			std::cin.ignore();
+			goto label1;
+		default:
+			system("cls");
+			std::cout << "ДОБАВИТЬ НОВУЮ КНИГУ\n";
+			std::cout << "*************\n";
+
+			std::cout << "Неверный ввод.\n\nНажмите ENTER чтобы продолжить...\n";
+			std::cin.get();
+			std::cin.clear();
+			std::cin.ignore();
+			break;
+		}
+	} while (true);
+label1: {}
+}
+
+void browseStorage(std::vector<book> storage)
+{
+	std::cout << "\n";
+	std::cout << std::left << std::setw(numWidth) << std::setfill(separator) << "ID";
+	std::cout << std::left << std::setw(nameWidth) << std::setfill(separator) << "НАЗВАНИЕ КНИГИ";
+	std::cout << std::left << std::setw(nameWidth) << std::setfill(separator) << "АВТОР";
+	std::cout << std::left << std::setw(numWidth) << std::setfill(separator) << "КОЛ-ВО";
+	std::cout << std::left << std::setw(numWidth) << std::setfill(separator) << "ЦЕНА";
+	std::cout << "\n";
+	std::cout << std::string(110, '-');
+
+	for (int i = 0; i < storage.size(); i++)
+	{
+		storage[i].printBookDebug();
+	}
+
+	std::cout << "\n\nНажмите ENTER чтобы продолжить...";
+	std::cin.clear();
+	std::cin.ignore();
+	std::cin.get();
+}
+
+void deleteBook(std::vector<book>* storage)
+{
+	int id;
+	char yn;
+	bool broken = false;
+
+	do
+	{
+		system("cls");
+		std::cout << "УДАЛЕНИЕ КНИГИ\n";
+		std::cout << "************\n";
+
+		std::cout << "Введите [ID] для удаления: ";
+		if (!(std::cin >> id))
+		{
+			system("cls");
+			std::cout << "УДАЛЕНИЕ КНИГИ\n";
+			std::cout << "************\n";
+
+			std::cout << "Неверный ввод.\n\nНажмите ENTER чтобы продолжить...\n";
+			std::cin.clear();
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			std::cin.get();
+		}
+		else
+		{
+			break;
+		}
+	} while (true);
+
+	for (int i = 0; i < storage->size(); i++)
+	{
+		if ((*storage)[i].ID == id)
+		{
+			do
+			{
+				system("cls");
+				std::cout << "УДАЛЕНИЕ КНИГИ\n";
+				std::cout << "************\n";
+
+				std::cout << "Вы удаляете: \n";
+				std::cout << "\n";
+				std::cout << std::left << std::setw(numWidth) << std::setfill(separator) << "ID";
+				std::cout << std::left << std::setw(nameWidth) << std::setfill(separator) << "НАЗВАНИЕ КНИГИ";
+				std::cout << std::left << std::setw(nameWidth) << std::setfill(separator) << "АВТОР";
+				std::cout << std::left << std::setw(numWidth) << std::setfill(separator) << "КОЛ-ВО";
+				std::cout << std::left << std::setw(numWidth) << std::setfill(separator) << "ЦЕНА";
+				std::cout << "\n";
+				std::cout << std::string(110, '-');
+
+				(*storage)[i].printBookDebug();
+
+				std::cout << "\nПодтвердить? (y/n):";
+				std::cin >> yn;
+				yn = tolower(yn);
+
+				switch (yn)
+				{
+				case 'y':
+
+					system("cls");
+					std::cout << "УДАЛЕНИЕ КНИГИ\n";
+					std::cout << "************\n";
+
+					(*storage).erase((*storage).begin() + i);
+					writeStorage(*storage);
+
+					std::cout << "ID [" << id << "] удален.";
+					std::cout << "\n\nНажмите ENTER чтобы продолжить...";
+					std::cin.clear();
+					std::cin.ignore();
+					std::cin.get();
+					broken = true;
+					goto label1;
+				case 'n':
+					system("cls");
+					std::cout << "УДАЛЕНИЕ КНИГИ\n";
+					std::cout << "************\n";
+
+					std::cout << "\nНажмите ENTER чтобы продолжить...";
+					std::cin.clear();
+					std::cin.ignore();
+					std::cin.get();
+					broken = true;
+					goto label1;
+				default:
+					system("cls");
+					std::cout << "УДАЛЕНИЕ КНИГИ\n";
+					std::cout << "************\n";
+
+					std::cout << "Неверный ввод.\n\nНажмите ENTER чтобы продолжить...";
+					std::cin.clear();
+					std::cin.ignore();
+					std::cin.get();
+					broken = true;
+					break;
+				}
+			} while (true);
+			break;
+		}
+	}
+label1: {}
+
+	if (broken == false)
+	{
+		system("cls");
+		std::cout << "УДАЛЕНИЕ КНИГИ\n";
+		std::cout << "************\n";
+
+		std::cout << "ID [" << id << "] не существует.\n";
+		std::cout << "\nНажмите ENTER чтобы продолжить...";
+		std::cin.clear();
+		std::cin.ignore();
+		std::cin.get();
+	}
+}
+
+int modifyMenu(book modifiedBook)
+{
+	int mode;
+	system("cls");
+	std::cout << "ИЗМЕНИТЬ СУЩЕСТВУЮЩУЮ КНИГУ\n";
+	std::cout << "*********************\n";
+
+	std::cout << "\n";
+	std::cout << std::left << std::setw(numWidth) << std::setfill(separator) << "ID";
+	std::cout << std::left << std::setw(nameWidth) << std::setfill(separator) << "НАЗВАНИЕ КНИГИ";
+	std::cout << std::left << std::setw(nameWidth) << std::setfill(separator) << "АВТОР";
+	std::cout << std::left << std::setw(numWidth) << std::setfill(separator) << "КОЛ-ВО";
+	std::cout << std::left << std::setw(numWidth) << std::setfill(separator) << "ЦЕНА";
+	std::cout << "\n";
+	std::cout << std::string(110, '-');
+	modifiedBook.printBookDebug();
+
+	std::cout << "\n\n1 - НАЗВАНИЕ КНИГИ\n";
+	std::cout << "2 - АВТОР\n";
+	std::cout << "3 - КОЛ-ВО\n";
+	std::cout << "4 - ЦЕНА\n\n";
+	std::cout << "0 - НАЗАД\n\n";
+
+	while (!(std::cin >> mode) || (mode < 0 || mode > 4))
+	{
+		std::cin.clear();
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		return -1;
+	}
+
+	return mode;
+}
+
+bool isStorageEmpty(std::vector<book> storage)
+{
+	if (storage.size() > 0)
+	{
+		return false;
+	}
+	else
+	{
+		std::cout << "Нет доступных книг.";
+		std::cin.get();
+		std::cin.clear();
+		std::cin.ignore();
+		return true;
+	}
+}
+
+void modifyID(std::vector<book>* storage)
+{
+	int id;
+	do
+	{
+		do
+		{
+			system("cls");
+			std::cout << "ИЗМЕНЕНИЕ СУЩЕСТВУЮЩЕЙ КНИГИ\n";
+			std::cout << "*********************\n";
+
+			std::cout << "Введите [ID] который вы хотите изменить: ";
+
+			if (!(std::cin >> id))
+			{
+				system("cls");
+				std::cout << "ИЗМЕНЕНИЕ СУЩЕСТВУЮЩЕЙ КНИГИ\n";
+				std::cout << "*********************\n";
+
+				std::cout << "Неверный ввод.\n\nНажмите ENTER чтобы продолжить...";
+				std::cin.clear();
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+				std::cin.get();
+			}
+			else
+			{
+				break;
+			}
+		} while (true);
+
+		for (int i = 0; i < (*storage).size(); i++)
+		{
+			if ((*storage)[i].ID == id)
+			{
+				id = i;
+				goto label1;
+			}
+		}
+		system("cls");
+		std::cout << "ИЗМЕНЕНИЕ СУЩЕСТВУЮЩЕЙ КНИГИ\n";
+		std::cout << "*********************\n";
+
+		std::cout << "Неверный ввод.\n\nНажмите ENTER чтобы продолжить...";
+		std::cin.clear();
+		std::cin.ignore();
+		std::cin.get();
+	} while (true);
+label1: {}
+	do
+	{
+		switch (modifyMenu((*storage)[id]))
+		{
+		case 0:
+			goto label2;
+		case 1:
+			(*storage)[id].changeTitle();
+			break;
+		case 2:
+			(*storage)[id].changeAuthor();
+			break;
+		case 3:
+			(*storage)[id].changeAmount();
+			break;
+		case 4:
+			(*storage)[id].changePrice();
+			break;
+		default:
+			system("cls");
+			std::cout << "ИЗМЕНЕНИЕ СУЩЕСТВУЮЩЕЙ КНИГИ\n";
+			std::cout << "*********************\n";
+			std::cout << "Неверный ввод.\n\nНажмите ENTER чтобы продолжить...";
+			std::cin.get();
+			break;
+		}
+	} while (true);
+label2: {}
+	writeStorage(*storage);
+}
